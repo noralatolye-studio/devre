@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#141715">
+  <meta name="description" content="DEVRE: 3 × 3 ışık bulmacası. Üç bölümü çöz, süreni ve hamle sayını Nöral Atölye Reels yorumuna yaz.">
+  <title>DEVRE · Nöral Atölye</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141715'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc15a'/%3E%3C/svg%3E">
+  <style>
+    :root { color-scheme: dark; --bg:#141715; --panel:#1c211d; --ink:#f4efdf; --muted:#b6beaf; --amber:#ffc15a; --line:#424b3c; }
+    * { box-sizing:border-box; }
+    [hidden] { display:none !important; }
+    html { -webkit-text-size-adjust:100%; }
+    body { margin:0; min-height:100vh; min-height:100svh; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; overscroll-behavior:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; background:radial-gradient(ellipse at 50% 15%, #ffc15a14, transparent 65%); }
+    main { width:min(100% - 32px, 460px); margin:0 auto; padding:max(22px, env(safe-area-inset-top)) 0 max(20px, env(safe-area-inset-bottom)); min-height:100vh; min-height:100svh; display:flex; flex-direction:column; }
+    .screen { flex:1; display:flex; flex-direction:column; }
+    .studio { display:flex; align-items:center; gap:10px; margin:0 0 16px; color:var(--muted); font-size:13px; letter-spacing:.12em; }
+    .studio::before { content:""; width:22px; height:2px; background:var(--amber); }
+    h1 { margin:0; font-weight:800; letter-spacing:-.055em; line-height:1.1; }
+    button { font:inherit; touch-action:manipulation; -webkit-tap-highlight-color:transparent; cursor:pointer; }
+    button:focus-visible { outline:3px solid var(--ink); outline-offset:4px; }
+    .action { min-height:52px; padding:0 16px; border:1px solid var(--line); border-radius:10px; background:transparent; color:var(--ink); font-size:15px; font-weight:600; }
+    .primary { border-color:var(--amber); color:var(--amber); }
+    .big { min-height:58px; width:100%; background:var(--amber); color:#251c0d; font-size:18px; font-weight:750; }
+
+    /* Açılış */
+    #intro { justify-content:center; text-align:center; align-items:center; }
+    #intro .studio { justify-content:center; margin-bottom:6px; }
+    .hero { display:block; width:auto; height:min(36svh, 300px); max-width:70%; object-fit:contain; margin:0 auto 4px; filter:drop-shadow(0 10px 30px #ffc15a22); }
+    #intro h1 { font-size:68px; }
+    .how { margin:10px 0 24px; color:var(--muted); max-width:30ch; }
+    .how strong { color:var(--ink); font-weight:650; }
+    #intro .big { max-width:360px; }
+
+    /* Oyun */
+    #game { width:min(100%, max(300px, calc(100svh - 385px))); margin:0 auto; }
+    #game h1 { font-size:42px; }
+    .title-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .tag { border:1px solid var(--line); border-radius:6px; padding:5px 9px; color:var(--muted); font-size:12px; white-space:nowrap; }
+    .metrics { display:flex; justify-content:space-between; padding:12px 0; font-size:13px; color:var(--muted); letter-spacing:.04em; }
+    .metrics strong { color:var(--ink); font-variant-numeric:tabular-nums; font-size:19px; margin-left:6px; letter-spacing:0; }
+    .board-panel { padding:20px; border:1px solid var(--line); border-radius:20px; background:var(--panel); }
+    .board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .cell { position:relative; min-width:64px; min-height:64px; aspect-ratio:1; padding:0; border:1px solid #59604c; border-radius:13px; background:#262c25; color:#b9c0ad; transition:background .15s, box-shadow .15s, transform .1s; }
+    .cell::before { content:""; position:absolute; inset:24%; border:2px solid currentColor; border-radius:50%; }
+    .cell::after { content:""; position:absolute; left:calc(50% - 1px); top:calc(50% - 8px); width:2px; height:16px; background:currentColor; }
+    .cell[aria-pressed="true"] { color:#332510; background:var(--amber); border-color:#ffd38b; box-shadow:0 0 24px #ffc15a15, inset 0 0 20px #fff1c525; }
+    .cell[aria-pressed="false"]::after { height:2px; width:16px; left:calc(50% - 8px); top:calc(50% - 1px); }
+    .cell:active { transform:scale(.95); }
+    .cell:disabled { cursor:default; opacity:1; }
+    .legend { display:flex; justify-content:center; gap:22px; margin:15px 0 0; color:var(--muted); font-size:12px; }
+    .legend span { display:flex; align-items:center; gap:7px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:var(--amber); }
+    .dot.off { background:transparent; border:1px solid var(--muted); }
+    .feedback { min-height:76px; padding:14px 0 12px; }
+    #status { margin:0; font-size:18px; font-weight:650; }
+    #detail { margin:3px 0 0; color:var(--muted); font-size:13px; }
+    .won #status { color:var(--amber); }
+    .actions { display:grid; grid-template-columns:1fr; gap:10px; }
+    .actions.won { grid-template-columns:1fr 1fr; }
+    .won .primary { background:var(--amber); color:#251c0d; }
+    .hint { margin:16px 0 0; color:var(--muted); font-size:12px; }
+
+    /* Bitiş */
+    #end { justify-content:center; text-align:center; align-items:center; }
+    #end .hero { height:min(24svh, 190px); }
+    #end h1 { font-size:46px; }
+    .result { display:flex; justify-content:center; gap:14px; width:100%; margin:18px 0 6px; }
+    .stat { flex:1; max-width:170px; padding:14px 8px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+    .stat span { display:block; color:var(--muted); font-size:12px; letter-spacing:.1em; }
+    .stat strong { display:block; font-size:38px; line-height:1.15; color:var(--amber); font-variant-numeric:tabular-nums; }
+    .note { margin:6px 0 0; color:var(--muted); font-size:14px; }
+    .cta { margin:22px 0 18px; font-size:18px; font-weight:650; max-width:24ch; }
+    .cta b { color:var(--amber); font-weight:750; }
+    #end .big { max-width:360px; background:transparent; color:var(--amber); border:1px solid var(--amber); }
+    @media (hover:hover) { .cell:not(:disabled):hover { outline:1px solid var(--amber); outline-offset:3px; } .action:hover { border-color:var(--ink); } }
+    @media (hover:none) { .hint { display:none; } }
+    @media (max-height:700px) { .hero { height:30svh; } #game h1 { font-size:34px; } .board-panel { padding:14px; } .board { gap:9px; } }
+    @media (max-width:360px) { #intro h1 { font-size:56px; } .board-panel { padding:16px; } .board { gap:10px; } .tag { font-size:11px; } }
+    @media (prefers-reduced-motion:reduce) { *, *::before, *::after { transition:none !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="screen" id="intro" aria-labelledby="intro-title">
+      <img class="hero" src="kivil.webp" width="480" height="480" alt="Kıvıl: elinde parlayan küp tutan küçük, koyu taş karakter">
+      <p class="studio">NÖRAL ATÖLYE / MİNİ OYUN 01</p>
+      <h1 id="intro-title">DEVRE</h1>
+      <p class="how"><strong>Tüm ışıkları söndür:</strong> bir düğme kendini ve yatay / dikey komşularını değiştirir.</p>
+      <button class="action big" id="start" type="button">Başla</button>
+    </section>
+
+    <section class="screen" id="game" hidden aria-label="Oyun">
+      <p class="studio">NÖRAL ATÖLYE / MİNİ OYUN 01</p>
+      <div class="title-row"><h1>DEVRE</h1><span class="tag">3 × 3 BULMACA</span></div>
+      <div class="metrics"><span>BÖLÜM<strong id="level">1 / 3</strong></span><span>HAMLE<strong id="moves">0</strong></span><span>SÜRE<strong id="time">0:00</strong></span></div>
+      <section class="board-panel" aria-label="Devre bulmacası">
+        <div class="board" id="board" role="group" aria-label="Dokuz ışık düğmesi"></div>
+        <p class="legend" aria-hidden="true"><span><i class="dot"></i>Açık (+)</span><span><i class="dot off"></i>Kapalı (−)</span></p>
+      </section>
+      <div class="feedback" id="feedback"><p id="status" role="status" aria-live="polite" aria-atomic="true"></p><p id="detail"></p></div>
+      <div class="actions" id="actions"><button class="action" id="reset" type="button">Bölümü sıfırla</button><button class="action primary" id="next" type="button" hidden>Sonraki bölüm →</button></div>
+      <p class="hint">Dokun / tıkla · Tab ile seç, Enter veya Boşluk ile bas · Oklarla gez.</p>
+    </section>
+
+    <section class="screen" id="end" hidden aria-labelledby="end-title">
+      <img class="hero" src="kivil.webp" width="480" height="480" alt="">
+      <h1 id="end-title">Devre kapandı!</h1>
+      <div class="result">
+        <div class="stat"><span>HAMLE</span><strong id="end-moves">0</strong></div>
+        <div class="stat"><span>SÜRE</span><strong id="end-time">0:00</strong></div>
+      </div>
+      <p class="note" id="end-note"></p>
+      <p class="cta">Skorunu Reels yorumuna yaz. <b>@noralatolye</b></p>
+      <button class="action big" id="again" type="button">Tekrar oyna ↻</button>
+    </section>
+    <noscript>Oynamak için tarayıcında JavaScript'i etkinleştir.</noscript>
+  </main>
+  <script id="devre-core">
+    // Saf oyun mantığı; aynı kod Node VM ile test edilir. İndeksler satır sırasıyla 0–8.
+    const DevreCore = (() => {
+      const SIZE = 3;
+      function affected(index) {
+        if (!Number.isInteger(index) || index < 0 || index > 8) throw new RangeError('Düğme indeksi 0–8 olmalı.');
+        const row = Math.floor(index / SIZE), col = index % SIZE;
+        return [index, ...(row > 0 ? [index - SIZE] : []), ...(row < 2 ? [index + SIZE] : []), ...(col > 0 ? [index - 1] : []), ...(col < 2 ? [index + 1] : [])];
+      }
+      function applyMove(board, index) {
+        const result = board.slice();
+        affected(index).forEach(i => { result[i] = !result[i]; });
+        return result;
+      }
+      const scrambles = [[0, 4, 8], [1, 3, 5, 7], [0, 1, 4, 6, 8]];
+      const levels = scrambles.map((sequence, i) => ({
+        name: ['İlk bağlantı', 'Çapraz akım', 'Son devre'][i],
+        solution: sequence.slice(),
+        initial: sequence.reduce(applyMove, Array(9).fill(false))
+      }));
+      function createState(level = 0) {
+        const levelIndex = ((level % levels.length) + levels.length) % levels.length;
+        return { levelIndex, board: levels[levelIndex].initial.slice(), moves: 0, won: false };
+      }
+      function press(state, index) {
+        if (state.won) return state;
+        const board = applyMove(state.board, index);
+        return { ...state, board, moves: state.moves + 1, won: board.every(light => !light) };
+      }
+      function reset(state) { return createState(state.levelIndex); }
+      function next(state) { return createState(state.levelIndex + 1); }
+      return { affected, applyMove, levels, createState, press, reset, next };
+    })();
+    globalThis.DevreCore = DevreCore;
+  </script>
+  <script id="devre-ui">
+    (() => {
+      const core = globalThis.DevreCore;
+      const MIN_MOVES = core.levels.reduce((sum, level) => sum + level.solution.length, 0);
+      const $ = id => document.getElementById(id);
+      const screens = { intro:$('intro'), game:$('game'), end:$('end') };
+      const board = $('board');
+      const nextButton = $('next');
+      let state = core.createState();
+      let totalMoves = 0, startedAt = 0, elapsed = 0, timer = null;
+
+      function show(name) {
+        Object.entries(screens).forEach(([key, node]) => { node.hidden = key !== name; });
+        window.scrollTo(0, 0);
+      }
+      function fmt(ms) {
+        const s = Math.floor(ms / 1000);
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      }
+      function tick() { elapsed = performance.now() - startedAt; $('time').textContent = fmt(elapsed); }
+      function startGame() {
+        state = core.createState(0);
+        totalMoves = 0;
+        startedAt = performance.now();
+        clearInterval(timer);
+        timer = setInterval(tick, 250);
+        tick();
+        render();
+        show('game');
+        cells[0].focus({ preventScroll:true });
+      }
+      function finish() {
+        clearInterval(timer);
+        tick();
+        $('end-moves').textContent = totalMoves;
+        $('end-time').textContent = fmt(elapsed);
+        $('end-note').textContent = totalMoves === MIN_MOVES
+          ? `${MIN_MOVES} hamle, en kısa yol.`
+          : `En kısa yol ${MIN_MOVES} hamle.`;
+        show('end');
+        $('again').focus({ preventScroll:true });
+      }
+
+      const cells = Array.from({ length:9 }, (_, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cell';
+        button.addEventListener('click', () => {
+          if (state.won) return;
+          state = core.press(state, index);
+          totalMoves++;
+          render();
+          if (state.won) nextButton.focus({ preventScroll:true });
+        });
+        button.addEventListener('keydown', event => {
+          const row = Math.floor(index / 3), col = index % 3;
+          const targets = { ArrowUp:row > 0 ? index - 3 : index, ArrowDown:row < 2 ? index + 3 : index, ArrowLeft:col > 0 ? index - 1 : index, ArrowRight:col < 2 ? index + 1 : index };
+          if (event.key in targets) { event.preventDefault(); cells[targets[event.key]].focus(); }
+        });
+        board.append(button);
+        return button;
+      });
+
+      function render() {
+        const lit = state.board.filter(Boolean).length;
+        const last = state.levelIndex === core.levels.length - 1;
+        $('level').textContent = `${state.levelIndex + 1} / ${core.levels.length}`;
+        $('moves').textContent = state.moves;
+        $('feedback').classList.toggle('won', state.won);
+        $('actions').classList.toggle('won', state.won);
+        nextButton.hidden = !state.won;
+        cells.forEach((button, index) => {
+          button.setAttribute('aria-pressed', String(state.board[index]));
+          button.setAttribute('aria-label', `Satır ${Math.floor(index / 3) + 1}, sütun ${index % 3 + 1}: ${state.board[index] ? 'açık' : 'kapalı'}`);
+          button.disabled = state.won;
+        });
+        $('status').textContent = state.won ? (last ? 'Son devre de kapandı!' : 'Devre kapandı!') : `${lit} ışık açık. Sıra sende.`;
+        $('detail').textContent = state.won ? `${state.moves} hamlede çözdün.` : `${core.levels[state.levelIndex].name} · Çapraz komşular değişmez.`;
+        nextButton.textContent = last ? 'Sonucu gör →' : 'Sonraki bölüm →';
+      }
+
+      $('start').addEventListener('click', startGame);
+      $('again').addEventListener('click', startGame);
+      $('reset').addEventListener('click', () => { state = core.reset(state); render(); cells[0].focus({ preventScroll:true }); });
+      nextButton.addEventListener('click', () => {
+        if (state.levelIndex === core.levels.length - 1) { finish(); return; }
+        state = core.next(state); render(); cells[0].focus({ preventScroll:true });
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>
