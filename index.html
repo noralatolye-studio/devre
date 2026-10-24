@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#141715">
-  <meta name="description" content="DEVRE: 3 × 3 ışık bulmacası. Üç bölümü çöz, süreni ve hamle sayını Nöral Atölye Reels yorumuna yaz.">
+  <meta name="description" content="DEVRE: 3 × 3 ışık bulmacası. Üç bölümü çöz, her gün yeni Günün Devresi'ni dene, sonucunu kopyalayıp paylaş.">
   <title>DEVRE · Nöral Atölye</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141715'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ffc15a'/%3E%3C/svg%3E">
   <style>
@@ -65,16 +65,27 @@
 
     /* Bitiş */
     #end { justify-content:center; text-align:center; align-items:center; }
-    #end .hero { height:min(24svh, 190px); }
-    #end h1 { font-size:46px; }
-    .result { display:flex; justify-content:center; gap:14px; width:100%; margin:18px 0 6px; }
+    #end .hero { height:min(14svh, 120px); margin-bottom:0; }
+    #end h1 { font-size:40px; }
+    .result { display:flex; justify-content:center; gap:14px; width:100%; margin:12px 0 6px; }
     .stat { flex:1; max-width:170px; padding:14px 8px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
     .stat span { display:block; color:var(--muted); font-size:12px; letter-spacing:.1em; }
-    .stat strong { display:block; font-size:38px; line-height:1.15; color:var(--amber); font-variant-numeric:tabular-nums; }
+    .stat strong { display:block; font-size:34px; line-height:1.15; color:var(--amber); font-variant-numeric:tabular-nums; }
     .note { margin:6px 0 0; color:var(--muted); font-size:14px; }
-    .cta { margin:22px 0 18px; font-size:18px; font-weight:650; max-width:24ch; }
+    .cta { margin:14px 0 12px; font-size:16px; font-weight:650; max-width:24ch; }
     .cta b { color:var(--amber); font-weight:750; }
-    #end .big { max-width:360px; background:transparent; color:var(--amber); border:1px solid var(--amber); }
+    #end .big { max-width:360px; }
+    .endbtns { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:360px; }
+    .endbtns .action { min-height:52px; padding:0 8px; border-color:var(--amber); color:var(--amber); font-size:15px; }
+
+    /* Günün Devresi + sonuç kopyalama */
+    .studio-row { display:flex; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:10px; }
+    .daily { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; width:100%; min-height:58px; padding:8px 16px; border-color:var(--amber); color:var(--amber); font-size:17px; font-weight:700; }
+    .daily small { color:var(--muted); font-size:12px; font-weight:500; letter-spacing:.02em; }
+    .lbl { font-weight:400; }
+    .share { width:100%; max-width:360px; margin:6px auto 0; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--ink); font:13px/1.45 ui-monospace, "Cascadia Mono", Consolas, monospace; text-align:left; white-space:pre-wrap; overflow-wrap:anywhere; -webkit-user-select:text; user-select:text; }
+    #copy { max-width:360px; margin-top:10px; background:var(--amber); color:#251c0d; border-color:var(--amber); }
+    #copy-msg { min-height:20px; margin:6px 0 0; color:var(--amber); font-size:13px; }
     @media (hover:hover) { .cell:not(:disabled):hover { outline:1px solid var(--amber); outline-offset:3px; } .action:hover { border-color:var(--ink); } }
     @media (hover:none) { .hint { display:none; } }
     @media (max-height:700px) { .hero { height:30svh; } #game h1 { font-size:34px; } .board-panel { padding:14px; } .board { gap:9px; } }
@@ -89,13 +100,16 @@
       <p class="studio">NÖRAL ATÖLYE / MİNİ OYUN 01</p>
       <h1 id="intro-title">DEVRE</h1>
       <p class="how"><strong>Tüm ışıkları söndür:</strong> bir düğme kendini ve yatay / dikey komşularını değiştirir.</p>
-      <button class="action big" id="start" type="button">Başla</button>
+      <div class="studio-row">
+        <button class="action big" id="start" type="button">Başla</button>
+        <button class="action daily" id="daily" type="button"><span>Günün Devresi</span><small id="daily-sub"></small></button>
+      </div>
     </section>
 
     <section class="screen" id="game" hidden aria-label="Oyun">
       <p class="studio">NÖRAL ATÖLYE / MİNİ OYUN 01</p>
-      <div class="title-row"><h1>DEVRE</h1><span class="tag">3 × 3 BULMACA</span></div>
-      <div class="metrics"><span>BÖLÜM<strong id="level">1 / 3</strong></span><span>HAMLE<strong id="moves">0</strong></span><span>SÜRE<strong id="time">0:00</strong></span></div>
+      <div class="title-row"><h1>DEVRE</h1><span class="tag" id="tag">3 × 3 BULMACA</span></div>
+      <div class="metrics"><span><b class="lbl" id="level-label">BÖLÜM</b><strong id="level">1 / 3</strong></span><span>HAMLE<strong id="moves">0</strong></span><span>SÜRE<strong id="time">0:00</strong></span></div>
       <section class="board-panel" aria-label="Devre bulmacası">
         <div class="board" id="board" role="group" aria-label="Dokuz ışık düğmesi"></div>
         <p class="legend" aria-hidden="true"><span><i class="dot"></i>Açık (+)</span><span><i class="dot off"></i>Kapalı (−)</span></p>
@@ -113,8 +127,11 @@
         <div class="stat"><span>SÜRE</span><strong id="end-time">0:00</strong></div>
       </div>
       <p class="note" id="end-note"></p>
-      <p class="cta">Skorunu Reels yorumuna yaz. <b>@noralatolye</b></p>
-      <button class="action big" id="again" type="button">Tekrar oyna ↻</button>
+      <pre class="share" id="share-text" aria-label="Paylaşılacak sonuç metni"></pre>
+      <button class="action big" id="copy" type="button">Sonucu kopyala</button>
+      <p id="copy-msg" role="status" aria-live="polite"></p>
+      <p class="cta">Skorunu yoruma yaz. <b>@noralatolye</b></p>
+      <div class="endbtns"><button class="action" id="again" type="button">Tekrar oyna ↻</button><button class="action" id="other" type="button">Günün Devresi</button></div>
     </section>
     <noscript>Oynamak için tarayıcında JavaScript'i etkinleştir.</noscript>
   </main>
@@ -122,6 +139,7 @@
     // Saf oyun mantığı; aynı kod Node VM ile test edilir. İndeksler satır sırasıyla 0–8.
     const DevreCore = (() => {
       const SIZE = 3;
+      const SITE_URL = 'https://noralatolye-studio.github.io/devre/';
       function affected(index) {
         if (!Number.isInteger(index) || index < 0 || index > 8) throw new RangeError('Düğme indeksi 0–8 olmalı.');
         const row = Math.floor(index / SIZE), col = index % SIZE;
@@ -132,54 +150,147 @@
         affected(index).forEach(i => { result[i] = !result[i]; });
         return result;
       }
+
+      // En kısa çözüm tablosu: 512 hamle kümesi (her hücreye en çok bir kez basılır; iki basış birbirini siler).
+      // Her ışık durumu için en az basış sayısı ve hangi hücreler. 3×3'te hamle matrisi tersinirdir: 512 durumun hepsi çözülebilir, çözüm tektir.
+      const moveBits = Array.from({ length:9 }, (_, i) => affected(i).reduce((m, j) => m | (1 << j), 0));
+      const bitsToBoard = bits => Array.from({ length:9 }, (_, i) => Boolean(bits >> i & 1));
+      const boardToBits = board => board.reduce((m, on, i) => on ? m | (1 << i) : m, 0);
+      const shortest = (() => {
+        const table = new Array(512).fill(null);
+        for (let set = 0; set < 512; set++) {
+          let bits = 0, count = 0;
+          for (let i = 0; i < 9; i++) if (set >> i & 1) { bits ^= moveBits[i]; count++; }
+          if (!table[bits] || count < table[bits].count) table[bits] = { count, presses:Array.from({ length:9 }, (_, i) => i).filter(i => set >> i & 1) };
+        }
+        return table;
+      })();
+      function shortestSolution(board) { return shortest[boardToBits(board)]; }
+
       const scrambles = [[0, 4, 8], [1, 3, 5, 7], [0, 1, 4, 6, 8]];
-      const levels = scrambles.map((sequence, i) => ({
-        name: ['İlk bağlantı', 'Çapraz akım', 'Son devre'][i],
-        solution: sequence.slice(),
-        initial: sequence.reduce(applyMove, Array(9).fill(false))
-      }));
+      const levels = scrambles.map((sequence, i) => {
+        const initial = sequence.reduce(applyMove, Array(9).fill(false));
+        return { name: ['İlk bağlantı', 'Çapraz akım', 'Son devre'][i], solution: sequence.slice(), initial, min: shortestSolution(initial).count };
+      });
+
+      // Günün Devresi: tarihten belirlenimci (deterministic) başlangıç deseni. Tarih Türkiye saatiyle (UTC+3) alınır.
+      function dateKey(now = Date.now()) { return new Date(now + 3 * 3600 * 1000).toISOString().slice(0, 10); }
+      function dayNumber(key) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(key);
+        if (!m) throw new RangeError('Tarih YYYY-AA-GG olmalı.');
+        return Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000);
+      }
+      function mulberry32(seed) {
+        let a = seed >>> 0;
+        return () => { a = (a + 0x6D2B79F5) >>> 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+      }
+      // Uygun desenler: en kısa çözümü 4–6 hamle olan durumlar (3×3'te her durumun tek çözümü vardır; hepsi çözülebilir).
+      // Gün numarası bu listenin her turda yeniden karıştırılan bir sırasından seçilir: aynı gün herkese aynı desen,
+      // bir tur (336 gün) içinde hiçbir desen tekrarlanmaz; art arda iki gün aynı desen gelmez.
+      const DAILY_MIN = 4, DAILY_MAX = 6;
+      const pool = Array.from({ length:512 }, (_, bits) => bits).filter(bits => shortest[bits].count >= DAILY_MIN && shortest[bits].count <= DAILY_MAX);
+      function dailyPuzzle(key) {
+        const day = dayNumber(key);
+        const cycle = Math.floor(day / pool.length), pos = day - cycle * pool.length;
+        const rnd = mulberry32(Math.imul(cycle + 1, 0x9E3779B1) ^ 0x0DE57E);
+        const order = pool.slice();
+        for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+        const bits = order[pos], best = shortest[bits];
+        return { key, board:bitsToBoard(bits), min:best.count, solution:best.presses.slice() };
+      }
+
       function createState(level = 0) {
         const levelIndex = ((level % levels.length) + levels.length) % levels.length;
-        return { levelIndex, board: levels[levelIndex].initial.slice(), moves: 0, won: false };
+        return { levelIndex, board:levels[levelIndex].initial.slice(), moves:0, won:false };
+      }
+      function createDailyState(puzzle) {
+        return { levelIndex:0, daily:true, initial:puzzle.board.slice(), board:puzzle.board.slice(), moves:0, won:false };
       }
       function press(state, index) {
         if (state.won) return state;
         const board = applyMove(state.board, index);
-        return { ...state, board, moves: state.moves + 1, won: board.every(light => !light) };
+        return { ...state, board, moves:state.moves + 1, won:board.every(light => !light) };
       }
-      function reset(state) { return createState(state.levelIndex); }
+      function reset(state) { return state.daily ? createDailyState({ board:state.initial }) : createState(state.levelIndex); }
       function next(state) { return createState(state.levelIndex + 1); }
-      return { affected, applyMove, levels, createState, press, reset, next };
+
+      // Wordle tarzı paylaşım metni. rows: her bölüm için { clicks, min }. Sarı kare = en kısa yola yeten hamle, siyah kare = fazla hamle.
+      function formatTime(ms) { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+      function shareText({ mode, key, rows, ms }, url = SITE_URL) {
+        const total = rows.reduce((n, r) => n + r.clicks, 0);
+        const min = rows.reduce((n, r) => n + r.min, 0);
+        const perfect = total === min;
+        const time = formatTime(ms);
+        let head;
+        if (mode === 'daily') {
+          const [y, m, d] = key.split('-');
+          head = [`DEVRE · Günün Devresi ${d}.${m}.${y}`, perfect ? `Kusursuz · ${total} hamle · ${time}` : `${total} hamle (en kısa ${min}) · ${time}`];
+        } else {
+          head = perfect ? [`DEVRE · Kusursuz ${min}`, `${total} hamle · ${time}`] : [`DEVRE · ${total} hamle`, `Kusursuz ${min} için ${total - min} fazla hamle · ${time}`];
+        }
+        const grid = rows.map(r => {
+          const cap = 12, shown = Math.min(r.clicks, cap);
+          return Array.from({ length:shown }, (_, i) => i < r.min ? '🟨' : '⬛').join('') + (r.clicks > cap ? `+${r.clicks - cap}` : '');
+        });
+        return [...head, ...grid, url].join('\n');
+      }
+
+      return { SITE_URL, affected, applyMove, levels, shortestSolution, dateKey, dayNumber, dailyPuzzle, createState, createDailyState, press, reset, next, formatTime, shareText };
     })();
     globalThis.DevreCore = DevreCore;
   </script>
   <script id="devre-ui">
     (() => {
       const core = globalThis.DevreCore;
-      const MIN_MOVES = core.levels.reduce((sum, level) => sum + level.solution.length, 0);
       const $ = id => document.getElementById(id);
       const screens = { intro:$('intro'), game:$('game'), end:$('end') };
       const board = $('board');
       const nextButton = $('next');
+      let mode = 'classic', puzzle = null, shareValue = '';
       let state = core.createState();
-      let totalMoves = 0, startedAt = 0, elapsed = 0, timer = null;
+      let totalMoves = 0, levelClicks = [0, 0, 0], startedAt = 0, elapsed = 0, timer = null;
+
+      // Günün Devresi: ?gun=YYYY-AA-GG ile başka bir gün denenebilir (test/önizleme); varsayılan bugün (Türkiye saati).
+      function todayKey() {
+        const q = /^\d{4}-\d{2}-\d{2}$/.exec(new URLSearchParams(location.search).get('gun') || '');
+        return q ? q[0] : core.dateKey();
+      }
+      const storeKey = key => `devre-gun-${key}`;
+      function savedDaily(key) { try { return localStorage.getItem(storeKey(key)); } catch { return null; } }
+      function saveDaily(key, value) { try { localStorage.setItem(storeKey(key), value); } catch {} }
+      function fmtDate(key) { const [y, m, d] = key.split('-'); return `${+d}.${m}.${y}`; }
+      function introDaily() {
+        const key = todayKey(), p = core.dailyPuzzle(key), done = savedDaily(key);
+        $('daily-sub').textContent = `${fmtDate(key)} · en kısa yol ${p.min} hamle` + (done ? ` · senin: ${done}` : '');
+      }
 
       function show(name) {
         Object.entries(screens).forEach(([key, node]) => { node.hidden = key !== name; });
         window.scrollTo(0, 0);
       }
-      function fmt(ms) {
-        const s = Math.floor(ms / 1000);
-        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-      }
+      const fmt = core.formatTime;
       function tick() { elapsed = performance.now() - startedAt; $('time').textContent = fmt(elapsed); }
-      function startGame() {
-        state = core.createState(0);
-        totalMoves = 0;
+      function beginTimer() {
         startedAt = performance.now();
         clearInterval(timer);
         timer = setInterval(tick, 250);
         tick();
+      }
+      function startGame() {
+        mode = 'classic';
+        state = core.createState(0);
+        totalMoves = 0; levelClicks = [0, 0, 0];
+        beginTimer();
+        render();
+        show('game');
+        cells[0].focus({ preventScroll:true });
+      }
+      function startDaily() {
+        mode = 'daily';
+        puzzle = core.dailyPuzzle(todayKey());
+        state = core.createDailyState(puzzle);
+        totalMoves = 0; levelClicks = [0];
+        beginTimer();
         render();
         show('game');
         cells[0].focus({ preventScroll:true });
@@ -187,14 +298,41 @@
       function finish() {
         clearInterval(timer);
         tick();
+        const daily = mode === 'daily';
+        const rows = daily ? [{ clicks:levelClicks[0], min:puzzle.min }] : core.levels.map((l, i) => ({ clicks:levelClicks[i], min:l.min }));
+        const min = rows.reduce((n, r) => n + r.min, 0);
+        const perfect = totalMoves === min;
+        $('end-title').textContent = perfect ? (daily ? 'Kusursuz!' : `Kusursuz ${min}!`) : (daily ? 'Günün Devresi kapandı!' : 'Devre kapandı!');
         $('end-moves').textContent = totalMoves;
         $('end-time').textContent = fmt(elapsed);
-        $('end-note').textContent = totalMoves === MIN_MOVES
-          ? `${MIN_MOVES} hamle, en kısa yol.`
-          : `En kısa yol ${MIN_MOVES} hamle.`;
+        $('end-note').textContent = perfect ? `${min} hamle, en kısa yol.` : `En kısa yol ${min} hamle.`;
+        shareValue = core.shareText({ mode, key:daily ? puzzle.key : '', rows, ms:elapsed });
+        $('share-text').textContent = shareValue;
+        $('copy').textContent = 'Sonucu kopyala';
+        $('copy-msg').textContent = '';
+        $('other').textContent = daily ? 'Üç bölüm' : 'Günün Devresi';
+        if (daily) saveDaily(puzzle.key, `${totalMoves} hamle`);
         show('end');
-        $('again').focus({ preventScroll:true });
+        $('copy').focus({ preventScroll:true });
       }
+
+      async function copyText(text) {
+        try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch {}
+        try {
+          const box = document.createElement('textarea');
+          box.value = text; box.setAttribute('readonly', '');
+          box.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;-webkit-user-select:text;user-select:text';
+          document.body.append(box); box.select(); box.setSelectionRange(0, text.length);
+          const ok = document.execCommand('copy');
+          box.remove();
+          return ok;
+        } catch { return false; }
+      }
+      $('copy').addEventListener('click', async () => {
+        const ok = await copyText(shareValue);
+        $('copy-msg').textContent = ok ? 'Kopyalandı. Yoruma yapıştırabilirsin.' : 'Kopyalanamadı: yukarıdaki metni basılı tutup elle kopyala.';
+        if (ok) $('copy').textContent = 'Kopyalandı ✓';
+      });
 
       const cells = Array.from({ length:9 }, (_, index) => {
         const button = document.createElement('button');
@@ -204,6 +342,7 @@
           if (state.won) return;
           state = core.press(state, index);
           totalMoves++;
+          levelClicks[mode === 'daily' ? 0 : state.levelIndex]++;
           render();
           if (state.won) nextButton.focus({ preventScroll:true });
         });
@@ -217,9 +356,12 @@
       });
 
       function render() {
+        const daily = mode === 'daily';
         const lit = state.board.filter(Boolean).length;
-        const last = state.levelIndex === core.levels.length - 1;
-        $('level').textContent = `${state.levelIndex + 1} / ${core.levels.length}`;
+        const last = daily || state.levelIndex === core.levels.length - 1;
+        $('tag').textContent = daily ? 'GÜNÜN DEVRESİ' : '3 × 3 BULMACA';
+        $('level-label').textContent = daily ? 'EN KISA' : 'BÖLÜM';
+        $('level').textContent = daily ? String(puzzle.min) : `${state.levelIndex + 1} / ${core.levels.length}`;
         $('moves').textContent = state.moves;
         $('feedback').classList.toggle('won', state.won);
         $('actions').classList.toggle('won', state.won);
@@ -229,18 +371,21 @@
           button.setAttribute('aria-label', `Satır ${Math.floor(index / 3) + 1}, sütun ${index % 3 + 1}: ${state.board[index] ? 'açık' : 'kapalı'}`);
           button.disabled = state.won;
         });
-        $('status').textContent = state.won ? (last ? 'Son devre de kapandı!' : 'Devre kapandı!') : `${lit} ışık açık. Sıra sende.`;
-        $('detail').textContent = state.won ? `${state.moves} hamlede çözdün.` : `${core.levels[state.levelIndex].name} · Çapraz komşular değişmez.`;
+        $('status').textContent = state.won ? (daily ? 'Günün Devresi kapandı!' : last ? 'Son devre de kapandı!' : 'Devre kapandı!') : `${lit} ışık açık. Sıra sende.`;
+        $('detail').textContent = state.won ? `${state.moves} hamlede çözdün.` : daily ? `${fmtDate(puzzle.key)} · en kısa yol ${puzzle.min} hamle · Çapraz komşular değişmez.` : `${core.levels[state.levelIndex].name} · Çapraz komşular değişmez.`;
         nextButton.textContent = last ? 'Sonucu gör →' : 'Sonraki bölüm →';
       }
 
       $('start').addEventListener('click', startGame);
-      $('again').addEventListener('click', startGame);
+      $('daily').addEventListener('click', startDaily);
+      $('again').addEventListener('click', () => (mode === 'daily' ? startDaily : startGame)());
+      $('other').addEventListener('click', () => (mode === 'daily' ? startGame : startDaily)());
       $('reset').addEventListener('click', () => { state = core.reset(state); render(); cells[0].focus({ preventScroll:true }); });
       nextButton.addEventListener('click', () => {
-        if (state.levelIndex === core.levels.length - 1) { finish(); return; }
+        if (mode === 'daily' || state.levelIndex === core.levels.length - 1) { finish(); return; }
         state = core.next(state); render(); cells[0].focus({ preventScroll:true });
       });
+      introDaily();
       render();
     })();
   </script>
